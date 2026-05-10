@@ -1,0 +1,10 @@
+# FitQuest 明亮运动风主题
+[theme]
+primaryColor = "#FF5100"
+backgroundColor = "#F8FAFC"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#0F172A"
+font = "sans serif"
+
+[browser]
+gatherUsageStats = false

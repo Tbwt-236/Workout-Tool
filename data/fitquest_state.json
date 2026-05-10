@@ -1,0 +1,86 @@
+{
+  "user": {
+    "id": "u_demo",
+    "name": "高琪",
+    "total_xp": 555,
+    "streak": 1,
+    "last_active_date": "2026-05-10",
+    "total_steps": 9850,
+    "achievements": [
+      "early_bird",
+      "week_warrior"
+    ],
+    "early_morning_dates": [],
+    "weekly_steps": {
+      "2026-05-10": 6000
+    }
+  },
+  "tasks": [
+    {
+      "id": "morning_run_2026-05-10",
+      "title": "晨跑 3 公里（或等效 25 分钟有氧）",
+      "kind": "duration",
+      "target": 25,
+      "reward_xp": 40,
+      "completed": true
+    },
+    {
+      "id": "steps_10k_2026-05-10",
+      "title": "步数过万",
+      "kind": "steps",
+      "target": 10000,
+      "reward_xp": 35,
+      "completed": false
+    },
+    {
+      "id": "stretch_2026-05-10",
+      "title": "晚间拉伸 10 分钟",
+      "kind": "duration",
+      "target": 10,
+      "reward_xp": 20,
+      "completed": true
+    },
+    {
+      "id": "hydrate_2026-05-10",
+      "title": "运动打卡（今日任意一次记录）",
+      "kind": "checkin",
+      "target": 1,
+      "reward_xp": 15,
+      "completed": true
+    }
+  ],
+  "tasks_date": "2026-05-10",
+  "feed": [
+    {
+      "user_name": "高琪",
+      "text": "解锁勋章「周常战士」",
+      "ts_iso": "2026-05-10T12:04:38"
+    },
+    {
+      "user_name": "高琪",
+      "text": "完成了「运动打卡（今日任意一次记录）」",
+      "ts_iso": "2026-05-10T12:04:38"
+    },
+    {
+      "user_name": "高琪",
+      "text": "完成了「晚间拉伸 10 分钟」",
+      "ts_iso": "2026-05-10T12:04:37"
+    },
+    {
+      "user_name": "高琪",
+      "text": "完成了「晨跑 3 公里（或等效 25 分钟有氧）」",
+      "ts_iso": "2026-05-10T12:04:35"
+    },
+    {
+      "user_name": "陈思远",
+      "text": "完成了「步数过万」",
+      "ts_iso": "2026-05-08T09:12:00"
+    },
+    {
+      "user_name": "李雨桐",
+      "text": "解锁勋章「早起鸟」",
+      "ts_iso": "2026-05-08T07:01:00"
+    }
+  ],
+  "week_tasks_done": 5
+}
