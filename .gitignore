@@ -1,4 +1,46 @@
+# macOS and editor files
+.DS_Store
+.idea/
+.vscode/
+
+# Local secrets
+.env
+.env.*
+!.env.example
+
+# JavaScript / Expo
+node_modules/
+.expo/
+dist/
+coverage/
+*.log
+
+# Python
 __pycache__/
+*.py[cod]
 .pytest_cache/
-*.pyc
-.streamlit/credentials.toml
+.venv/
+venv/
+
+# Local tooling and temporary files
+.tools/
+tmp/
+
+# Native build outputs and signing material
+*.apk
+*.aab
+*.ipa
+*.keystore
+*.jks
+*.p12
+*.mobileprovision
+apps/mobile/android/
+apps/mobile/ios/
+
+# Local runtime databases (keep the existing legacy demo JSON)
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
