@@ -1,0 +1,28 @@
+---
+description: FitQuest specification-driven quality gates shared with Codex
+alwaysApply: true
+---
+
+# FitQuest quality workflow
+
+This repository uses GitHub Spec Kit for product specification and planning.
+Do not replace it with a second planning workflow.
+
+Use the project skills under `.cursor/skills` as follows:
+
+1. Read the current specification and acceptance criteria before editing code.
+2. Use `test-driven-development` for features, behavior changes, refactors, and bug fixes.
+3. Use `systematic-debugging` before proposing any technical fix.
+4. Use `verification-before-completion` before saying work is complete or moving on.
+5. Use `requesting-code-review` after a meaningful task and before merge.
+
+For learning-oriented work, explain:
+
+- the purpose of the change;
+- the key files and data flow;
+- the smallest concepts the learner needs now;
+- how the result was verified;
+- what remains uncertain.
+
+Do not add dependencies, expand scope, or change architecture without stating
+the reason and updating the relevant specification or decision record.

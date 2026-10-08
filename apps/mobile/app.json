@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "FitQuest",
+    "slug": "fitquest",
+    "version": "0.0.1",
+    "scheme": "fitquest",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "platforms": ["ios", "android"],
+    "android": {
+      "blockedPermissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.VIBRATE"
+      ]
+    },
+    "plugins": ["expo-router", "expo-system-ui"],
+    "experiments": { "typedRoutes": true }
+  }
+}

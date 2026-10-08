@@ -1,74 +1,130 @@
-# ⚡ FitQuest — 游戏化运动激励工具
+# FitQuest / Workout Tool
 
-面向大学生的游戏化运动打卡应用。完成任务获得经验值、解锁勋章、登上排行榜，让运动像玩游戏一样上瘾。
+This repository is the working root for turning the original Workout Tool
+portfolio project into a production-oriented mobile fitness app.
 
-## ✨ 功能亮点
+## Product direction
 
-| 模块 | 说明 |
-|------|------|
-| 🏠 个人主页 | 等级进度、本周消耗/步数/活跃时长、AI 洞察、勋章墙 |
-| 📋 任务中心 | 每日 4 项挑战（步数/时长/打卡），进度条+快捷追加，完成即获 XP |
-| 🏆 排行榜 | 周积分动态排名、宿舍小队合力挑战步数目标、动态墙 |
-| 📊 数据分析 | 近 7 天步数趋势图、五维能力雷达、智能小结 |
+- **Primary target:** an Expo + React Native app for iOS and Android.
+- **Development method:** specification-driven development with explicit
+  requirements, acceptance criteria, tests, verification, and review.
+- **Learning goal:** every feature must include a short explanation of the
+  concepts, important files, data flow, and verification method.
 
-### 游戏化系统
+## Current state
 
-- **7 级称号**：青铜跑者 → 白银战士 → 黄金骑士 → 铂金猎手 → 钻石之心 → 星耀先锋 → 王者之翼
-- **3 枚勋章**：早起鸟（连续清晨运动）、运动健将（累计 10 万步）、周常战士（周完成 5 次挑战）
-- **经验公式**：每级所需槽量 = level² × 100 XP
+2026-10-07: the owner chose B, now implemented as bright orange / ink navy / mist-white real UI. Local candidate `f3b396b26936` has fresh 153-test, type/lint, export/build checks and targeted synthetic 320dp/130% font/save/reopen evidence. The owner confirmed the current type size, palette and density. iPhone acceptance remains pending. See [dated verification](specs/001-workout-session-loop/verification.md). The following native scenarios retain their original 2026-10-02 build scope.
 
-## 🚀 快速开始
+### Confirmed App preview
+
+Real Android runtime screenshots from a Mac emulator, using synthetic data. Chinese and English share the same training data and interactions; physical iPhone acceptance is still pending.
+
+| Training | Calendar history |
+| --- | --- |
+| ![Training](docs/design/screenshots/2026-10-07/training-zh.png) | ![Calendar history](docs/design/screenshots/2026-10-07/history-zh.png) |
+
+[English training](docs/design/screenshots/2026-10-07/training-en.png) · [English history](docs/design/screenshots/2026-10-07/history-en.png) · [Design decisions](docs/design/FRONTEND_REVIEW.md)
+
+### Run the mobile app
+
+Use Node.js 24 and npm 11, then:
 
 ```bash
-# 1. 克隆仓库
-git clone https://github.com/Tbwt-236/Workout-Tool.git
-cd Workout-Tool
-
-# 2. 安装依赖
-pip install -r requirements.txt
-
-# 3. 启动
-streamlit run app.py
+cd apps/mobile
+npm ci
+npm run test:ci
+npm run typecheck
+npm run lint
+npm start
 ```
 
-浏览器打开 `http://localhost:8501` 即可使用。
+See [mobile setup and limitations](apps/mobile/README.md). Historical `/Users/...` links in audit notes refer to the original development machine; they are not downloadable repository assets.
 
-### 依赖
+### Earlier implementation evidence
 
-- Python ≥ 3.10
-- streamlit ≥ 1.28
-- pandas ≥ 2.0
-- plotly ≥ 5.18
+- `legacy/streamlit/` contains the recovered original Streamlit application.
+- `.agents/skills/` contains the canonical project quality skills.
+- `.cursor/skills/` exposes the same skills to Cursor without duplicating them.
+- `.cursor/rules/` contains persistent Cursor workflow rules.
+- GitHub Spec Kit is initialized under `.specify/` with Codex skills mode.
+- `specs/001-workout-session-loop/` contains the approved first mobile feature
+  specification, technical design artifacts and 33 implementation tasks (including the bilingual amendment).
+- `apps/mobile/` connects Expo routes to bilingual workout entry, correction,
+  confirmed save, saved summaries and calendar history with confirmed deletion.
+  The shared provider and SQLite flow pass 153 Jest tests in 19 suites, including
+  real Router + desktop SQLite integration. Type/lint, both JS/Hermes exports,
+  and the latest Android arm64 build/signature/ZIP-alignment checks pass.
+  The 2026-10-02 local APK was `4f6c66316bf5` (release variant, debug signature,
+  temporary package `dev.fitquest.local`). Its independently reviewed targeted Android observation shows
+  Loading while a save owns storage, no false read error, no late navigation after
+  leaving, and correct offline reopen. Existing synthetic rows remain unchanged.
+  The prior `044ab329e9e4` APK separately passed the late-save navigation scenario.
+  Earlier Q001–Q007/Q009, 20-cycle persistence, locale/320 dp keyboard and 16 KB
+  evidence remain bound to their respective builds; they were not all rerun on 4f6.
+  Disabling 16 KB compatibility mode was not verified.
+  On the earlier `00aba5737eab` APK, the 1000-workout calendar/detail/scroll/back
+  path was independently observed. First-window P95 was 298 ms across five starts;
+  this does not measure full UI readiness. Slow frames were retained, and the
+  software-rendered emulator does not establish real-device smoothness.
+  Q008 remains partial: narrow-calendar design, actual screen-reader use,
+  physical devices, iOS and privacy/user validation are pending.
+  See [mobile README](apps/mobile/README.md) for versioned artifacts and commands,
+  and [tasks](specs/001-workout-session-loop/tasks.md) for the current task state.
+  T032 running/learning documents are complete; owner mastery requires demonstration.
+  Expo Doctor's same-day 21/21 result applies to unchanged dependencies;
+  audit remains open with 15 findings. This is not store readiness.
+- Frontend work requires multiple user confirmation rounds, tracked in
+  `docs/design/FRONTEND_REVIEW.md` (light/orange, inline set entry, bottom Train/History navigation and calendar date-to-detail interaction accepted; automatic keyboard dismissal and Finish/Delete flows accepted; core co-design complete, visual richness deferred, narrow-calendar choice and full accessibility validation pending).
 
-## 📖 使用指南
+The Streamlit application is preserved as product and domain reference. It is
+not the target architecture for the mobile app.
 
-1. **个人主页** — 查看等级进度和本周运动概览，点击「同步今日运动并打卡」模拟设备同步
-2. **任务中心** — 完成每日挑战：输入步数/时长或一键打卡，完成即获经验
-3. **排行榜** — 查看周榜排名，完成任务为宿舍小队贡献进度
-4. **数据分析** — 查看步数趋势和能力雷达图
+## Current planning documents
 
-侧边栏可修改昵称（自动保存）、手动保存进度到本地、重置演示数据。
+- [`docs/product/DELIVERY_ROADMAP_2026-09-23.md`](docs/product/DELIVERY_ROADMAP_2026-09-23.md)
+  estimates remaining milestones, effort, calendar time, cash and maintenance costs,
+  with a staged validation and monetization plan. New scope and platform/capacity
+  scenarios are proposals, not approvals or release-date promises.
 
-## 🗂 项目结构
+- [`docs/product/PLATFORM_DECISION_2026-09-12.md`](docs/product/PLATFORM_DECISION_2026-09-12.md)
+  compares current platform fees, estimated effort, revenue scenarios and why
+  the current implementation proceeds with a local-first App.
+
+- [`docs/product/PRODUCT_AND_DELIVERY_PLAN.md`](docs/product/PRODUCT_AND_DELIVERY_PLAN.md)
+  defines the draft product strategy, MVP boundary, business hypotheses,
+  validation gates, technical direction, and staged delivery roadmap.
+- [`docs/learning/AI_PRODUCT_MANAGER_PATH.md`](docs/learning/AI_PRODUCT_MANAGER_PATH.md)
+  defines the learning outcomes and the single-agent collaboration protocol.
+- [`docs/learning/MOBILE_TECH_STACK_FOUNDATIONS.md`](docs/learning/MOBILE_TECH_STACK_FOUNDATIONS.md)
+  explains the mobile stack, FitQuest data flow, official learning references,
+  and mastery exercises for a first-time Expo and React Native learner.
+- [`docs/product/DECISIONS.md`](docs/product/DECISIONS.md) records approved
+  product decisions and the evidence that can trigger a future review.
+- [`.specify/memory/constitution.md`](.specify/memory/constitution.md) defines
+  the non-negotiable product, learning, privacy, and engineering principles.
+- [`docs/research/INTERVIEW_GUIDE.md`](docs/research/INTERVIEW_GUIDE.md) and the
+  adjacent templates support the first 12 problem-discovery interviews.
+
+The product direction was approved by the product owner on 2026-08-02. These
+documents are planning inputs, not substitutes for future Spec Kit feature
+specifications.
+
+## Planned structure
 
 ```text
-Workout-Tool/
-├── app.py                  # 主入口
-├── config.py               # 配色 & 等级配置
-├── models.py               # 数据模型
-├── components/             # UI 页面组件
-├── utils/                  # 业务逻辑 & 工具
-├── data/                   # 本地存档
-├── tests/                  # 冒烟测试
-└── ARCHITECTURE.md         # 技术架构详解
+apps/
+  mobile/              # Expo routes, training UI and local SQLite storage
+legacy/
+  streamlit/           # Original portfolio implementation
+specs/                 # Feature specifications and acceptance criteria
+docs/
+  product/             # Vision, users, roadmap
+  architecture/        # Architecture and decisions
+  learning/            # Learning notes tied to features
 ```
 
-## 🧪 运行测试
-
-```bash
-pytest tests/ -v
-```
-
-## 📄 许可
-
-MIT License
+Continue from `specs/001-workout-session-loop/tasks.md`. The first domain batch
+and Expo training/save/history/delete flow are implemented; remaining small-screen,
+accessibility and usability acceptance, followed by the privacy/export slice once approved,
+are next. The privacy/export specification is still a draft. Native links are restricted to known paths;
+the upstream URL-decoder dependency advisory remains open.
