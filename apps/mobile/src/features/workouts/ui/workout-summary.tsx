@@ -11,7 +11,8 @@ export function WorkoutSummary(props: SummaryProps) {
   return <SummaryContent key={props.id} {...props} />;
 }
 function SummaryContent({ id, onBack, deletable = false }: SummaryProps) {
-  const { repository, locale, deleting, removeWorkout } = useWorkout();
+  const { repository, locale, state, deleting, removeWorkout } = useWorkout();
+  const writePending = state.status === 'completing' || deleting;
   const [confirming, setConfirming] = useState(false);
   const [deleteFailed, setDeleteFailed] = useState(false);
   const confirmationConsumed = useRef(false);
@@ -20,12 +21,16 @@ function SummaryContent({ id, onBack, deletable = false }: SummaryProps) {
   const [loaded, setLoaded] = useState<{ id: number; attempt: number; result: GetCompletedWorkoutResult } | null>(null);
   const [attempt, setAttempt] = useState(0);
   const result = loaded?.id === id && loaded.attempt === attempt ? loaded.result : null;
+  const needsRead = result === null;
   useEffect(() => {
+    // Native links can enter a detail while our own write holds the repository lock.
+    // Wait for success or failure, but keep an already loaded detail/delete outcome.
+    if (writePending || !needsRead) return;
     let active = true;
     void repository.getCompletedWorkout(id).then(value => { if (active) setLoaded({ id, attempt, result: value }); },
       () => { if (active) setLoaded({ id, attempt, result: { ok: false, code: 'UnexpectedStorageError' } }); });
     return () => { active = false; };
-  }, [repository, id, attempt]);
+  }, [repository, id, attempt, writePending, needsRead]);
   const zh = locale === 'zh', copy = getWorkoutCopy(locale);
   async function confirmDelete() {
     if (!confirming || deleting || confirmationConsumed.current) return;

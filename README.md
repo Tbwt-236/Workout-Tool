@@ -13,6 +13,8 @@ portfolio project into a production-oriented mobile fitness app.
 
 ## Current state
 
+2026-10-12: fixed a false history-detail read error when a native link opens an existing workout during a pending save. Both commit and rollback now release the waiting detail read. Fresh 155 tests / 19 suites, type/lint and iOS/Android JS/Hermes exports pass; native revalidation of this fix remains pending. The History “Data” entry is approved, while its content/export flow remains a reviewed prototype awaiting feedback. B visuals are unchanged.
+
 2026-10-07: the owner chose B, now implemented as bright orange / ink navy / mist-white real UI. Local candidate `f3b396b26936` has fresh 153-test, type/lint, export/build checks and targeted synthetic 320dp/130% font/save/reopen evidence. The owner confirmed the current type size, palette and density. iPhone acceptance remains pending. See [dated verification](specs/001-workout-session-loop/verification.md). The following native scenarios retain their original 2026-10-02 build scope.
 
 ### Confirmed App preview
