@@ -1,3 +1,26 @@
+# 2026-10-12 保存期间历史详情读取修复
+
+问题：已允许的 `fitquest://history/1` 可在另一场保存事务尚未结束时打开旧详情。原 `WorkoutSummary` 立即读取，仓储 Busy 被显示成“暂时无法读取训练”，保存完成也不再读取。根因在页面缺少写入生命周期协调，不是数据库内容丢失。
+
+最小修复：[workout-summary.tsx](../../apps/mobile/src/features/workouts/ui/workout-summary.tsx)在当前详情尚无本轮结果且没有自身写入时才发起读取；保存或删除结束后自动继续。已加载详情、删除失败和删除 NotFound 结果保留，实际存储错误仍可显式重试；没有加入定时重试或放宽数据库锁。现有 B 样式、训练语义、路由白名单和依赖保持。
+
+验证与复核：
+
+- `app-routes.test.tsx` 新增 commit/rollback 两例：预存旧训练，悬挂新训练 INSERT，经真实 Router 进入旧详情；中文/英文均显示等待，写入成功或回滚后自动展示原记录，不被迟到回执跳回摘要。成功仅多一场；失败原草稿及已录组保留。
+- RED：修复前两项均因出现假读取错误、缺少“读取中…”失败。GREEN：聚焦详情/删除/路由共21项、3套通过；全量155项、19套通过；typecheck/lint exit 0。既有真实错误重试、迟到ID、删除NotFound回归仍通过。
+- iOS/Android JS/Hermes资源导出通过。未构建新的APK或跑本次原生专项，10-07 `f3b396b26936` 的截图/设备结果不能归到本修复。
+- 独立代码审查 Critical 0 / Important 0 / Minor 0；`needsRead` 避免写入结束时覆盖已有详情，现有 attempt 与ID失效规则保留。
+
+本机审计目录：`/Users/qqqq/Documents/Codex/2026-09-12/gen/work/detail-read-2026-10-12/`，包含 baseline、red.txt、focused.txt、tests.txt、typecheck.txt、lint.txt、export.txt。它们是本地证据，不是 GitHub 可下载附件。
+
+下一次原生专项：用两场合成训练重走“保存占用→热链接旧详情→成功/回滚释放→自动旧详情”，中英各核对等待与错误，再确认草稿/旧记录不变。001仍29/33，设备、读屏、隐私与5位用户条件独立待办。
+
+阶段反思：历史列表已处理写入等待，但详情入口遗漏同一状态边界。测试应按所有获准入口核对异步生命周期，不能用单页通过推定全部入口完成。该补丁不增加新的业务功能。
+
+## 本步学习验收
+
+目标L2（能照做）：区别数据库“正在占用”和“读取失败”，理解页面等待与真实错误重试。练习在`app-routes.test.tsx`找出暂停INSERT、进入旧详情、释放事务三步，运行`npm run test:ci -- --runTestsByPath __tests__/screens/app-routes.test.tsx`并解释commit/rollback都应显示旧详情。可汇报：“修复保存期间打开历史详情的假错误，155项测试和资源导出通过，真机专项尚待。”答不清时沿Summary→Provider→仓储Busy返回重读并重跑；工程修复完成，本人学习仍待演示。
+
 # 2026-09-12 首批领域规则验证
 
 本地恢复检查点的实际提交、保存范围和main/真实暂存区保留结果见[执行回执](/Users/qqqq/Documents/Codex/2026-09-12/gen/work/app-cycle-2026-10-02/artifacts/git-checkpoint-2026-10-02.json)；不据此关闭T031或推定远程发布。原暂存区的独立版本不是该功能树快照的备份范围。

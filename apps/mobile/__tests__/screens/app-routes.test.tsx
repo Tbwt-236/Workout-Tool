@@ -14,6 +14,69 @@ import Detail from '../../src/app/history/[id]';
 import * as intent from '../../src/app/+native-intent';
 jest.mock('../../src/features/workouts/data/expo-workout-repository', () => ({ createExpoWorkoutRepository: jest.fn() }));
 
+test.each(['commit', 'rollback'] as const)('保存中热链接打开已有详情：%s 后自动读取目标，中英不误报且不被迟到回执跳走', async outcome => {
+  const f = sqliteFixture();
+  let view: Awaited<ReturnType<typeof render>> | undefined;
+  let release!: () => void;
+  const gate = new Promise<void>(done => { release = done; });
+  let hold = false;
+  let save: ReturnType<typeof jest.fn<ReturnType<typeof createSqliteWorkoutRepository>['saveCompletedWorkout']>> | undefined;
+  try {
+    const repository = createSqliteWorkoutRepository(async () => {
+      const { connection } = f.open();
+      return { ...connection, async runAsync(sql, params) {
+        if (hold && sql.startsWith('INSERT INTO workouts')) {
+          await gate;
+          if (outcome === 'rollback') throw new Error('Synthetic insert failure');
+        }
+        return connection.runAsync(sql, params);
+      } };
+    });
+    expect(await repository.saveCompletedWorkout({ startedAt: '2026-09-23T00:00:00.000Z', exercises: [
+      { localKey: 'old-e', name: '已有深蹲', position: 0,
+        sets: [{ localKey: 'old-s', position: 0, reps: 8, weightTenthsKg: 625 }] },
+    ] }, '2026-09-23T01:00:00.000Z')).toEqual({ ok: true, workoutId: 1 });
+    hold = true;
+    save = jest.fn(repository.saveCompletedWorkout);
+    jest.mocked(createExpoWorkoutRepository).mockReturnValue({ ...repository, saveCompletedWorkout: save });
+    const context = getMockContext({ _layout: Layout, index: Index, 'workout/active': Active,
+      'workout/complete/[id]': Complete, 'history/index': History, 'history/[id]': Detail, '+native-intent': intent });
+    view = await render(<ExpoRoot context={context} location="/" />);
+    const press = async (name: string) => fireEvent.press(await screen.findByRole('button', { name }));
+    await press('开始'); await press('＋ 动作');
+    await fireEvent.changeText(screen.getByLabelText('动作名称'), '正在保存的卧推'); await press('保存动作');
+    await fireEvent.changeText(screen.getByLabelText('正在保存的卧推 次数'), '10'); await press('正在保存的卧推 记录');
+    await press('完成'); await press('确认完成');
+    expect(screen.getByText('保存中…')).toBeTruthy();
+    expect(intent.redirectSystemPath({ path: 'fitquest://history/1', initial: false })).toBe('/history/1');
+    await act(async () => router.replace('/history/1'));
+    expect(screen.getByText('读取中…')).toBeTruthy();
+    expect(screen.queryByText('暂时无法读取训练')).toBeNull();
+    expect(screen.queryByRole('button', { name: '重试' })).toBeNull();
+    await press('EN');
+    expect(screen.getByText('Loading…')).toBeTruthy();
+    expect(screen.queryByText('Could not load workout')).toBeNull();
+    await act(async () => { release(); await save!.mock.results[0].value; });
+    expect(await screen.findByText('已有深蹲')).toBeTruthy();
+    expect(screen.getByText('62.5 kg × 8')).toBeTruthy();
+    expect(screen.queryByText('正在保存的卧推')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Retry' })).toBeNull();
+    expect(save).toHaveBeenCalledTimes(1);
+    const history = await repository.listCompletedWorkouts();
+    expect(history.ok && history.workouts.map(workout => workout.id)).toEqual(outcome === 'commit' ? [2, 1] : [1]);
+    if (outcome === 'rollback') {
+      await press('Train');
+      expect(await screen.findByText('正在保存的卧推')).toBeTruthy();
+      expect(screen.getByText('— × 10')).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Retry' })).toBeTruthy();
+    }
+  } finally {
+    release();
+    await act(async () => { await save?.mock.results[0]?.value; });
+    await view?.unmount(); f.dispose();
+  }
+});
+
 test('保存期间离开训练页，提交仍进历史，但旧页面不得把当前路由跳回摘要', async () => {
   const f = sqliteFixture();
   let view: Awaited<ReturnType<typeof render>> | undefined;

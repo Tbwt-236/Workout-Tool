@@ -95,10 +95,12 @@ test('ID切换撤销旧确认，旧删除响应不让新详情误跳回历史', 
   expect(screen.queryByText('删除这次训练？')).toBeNull();
   await press('删除'); await press('确认删除');
   expect(h.remove).toHaveBeenCalledWith(8, true);
-  await view.rerender(<h.Page id={9} />); await screen.findByText('自填深蹲');
+  await view.rerender(<h.Page id={9} />);
+  expect(screen.getByText('读取中…')).toBeTruthy();
+  expect(screen.queryByText('暂时无法读取训练')).toBeNull();
   await act(async () => release({ ok: true }));
   expect(h.back).not.toHaveBeenCalled();
-  expect(screen.getByText('自填深蹲')).toBeTruthy();
+  expect(await screen.findByText('自填深蹲')).toBeTruthy();
 });
 test('完成摘要仅查看，不出现历史详情的删除入口', async () => {
   const h = setup();

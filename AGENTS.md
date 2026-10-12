@@ -1,5 +1,9 @@
 # FitQuest agent instructions
 
+## 2026-10-12 continuation
+
+The owner confirmed 002 entry A: Data at the top right of History, reachable with empty history. Content, JSON/export and cache policy still await review; the bilingual interactive preview is discussion material only. The approved 001 detail screen now defers a new read while an app-owned save/delete is pending, retaining already loaded details and deletion outcomes. Two real Router/desktop SQLite commit/rollback regressions bring fresh Jest to 155/19; type/lint and iOS/Android JS/Hermes exports pass, independent code review has no blockers. This change has not been rebuilt or exercised on a native device; the 10-07 APK and screenshots remain historical evidence. Preserve B visuals. See the latest verification and 002 research; do not infer whole-feature approval from the entry choice.
+
 ## 2026-10-07 visual update
 
 The user chose B (bright orange, deep ink navy, mist white). It is implemented in the real training/history UI, keeping established interactions. Current local candidate: `f3b396b26936`; fresh 153/19, type/lint, both JS/Hermes exports, Android build/signature/ZIP checks pass. Task-owned Mac Android emulator checks at 320dp/130% font cover specified inline validation/edit/save and offline saved reopen; original 1004 synthetic workouts remain intact, one synthetic workout added. See the dated section of `specs/001-workout-session-loop/verification.md` and `docs/design/FRONTEND_REVIEW.md`. The owner confirmed “保持现在最好 同步更新github”: retain the rendered B type size, palette and density, and sync this project to GitHub. Narrow-calendar choice, 002 choice, iOS/physical/reader/privacy/user gates remain pending. Historical native evidence below belongs to its original APK. No new dependencies, LAN exposure, release, or automation resumption occurred.
