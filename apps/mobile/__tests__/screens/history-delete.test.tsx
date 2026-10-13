@@ -13,6 +13,7 @@ function setup() {
     initialize: async () => ({ ok: true }), saveCompletedWorkout: async () => ({ ok: true, workoutId: 7 }),
     listCompletedWorkouts: async () => ({ ok: true, workouts: [workout] }),
     getCompletedWorkout: async id => ({ ok: true, workout: { ...workout, id } }),
+    readExportSnapshot: async () => ({ ok: false, code: 'StorageUnavailable' }),
     deleteCompletedWorkout: remove,
   };
   const Page = ({ id = 7 }: { id?: number }) => <WorkoutProvider repository={repository}>

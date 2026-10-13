@@ -1,5 +1,22 @@
 # FitQuest 移动端工程
 
+## 2026-10-13 Android export validation
+
+已在 Android16 合成模拟器验证数据面板、系统取消/返回/再导出、本地测试接收器实际读取 JSON、选择器期间终止后重启，以及受控缓存启动清理。中英320dp/130%字号面板无明显截字，英文说明可滚动并关闭。20场原训练及独立1000场测试库逐字节不变；没有清库。iPhone、真实读屏、全套中断和5用户/隐私验收仍待，见[完整证据](../../specs/002-local-data-control/verification.md)。
+
+当前自动检查181项/25套，类型与lint通过。新增 `npm run benchmark:export`：独立临时合成1000场/4000动作/20000组，25轮使用生产仓储和JSON编码器，逐字段核对。文件3,039,757字节；快照/编码/Node文件生成中位53.213/10.655/4.081ms，三段合计中位68.656ms、P95 78.838ms。原始样本在[仓库证据](../../specs/002-local-data-control/evidence/2026-10-13/benchmark-export.json)。这是Mac Node24.21.0热进程基准，不包括Expo桥接、系统等待或手机UI；不加速度通过阈值，不改生产代码或数据。
+
+### 本步学习验收
+
+证据归属L2、性能指标取舍L3。练习运行 `npm run benchmark:export`，复算25个合计样本的P95，再解释为什么不能承诺手机69ms完成导出；用合成数据在接收位置读取JSON。可汇报“Android导出主要路径和桌面规模基准已验证，实体设备及剩余验收继续”。未达标则重做分段/接收检查；脚本与验收产物完成，本人掌握待演示。
+
+## 2026-10-12 data export（历史时点）
+
+History → Data opens the approved bottom sheet. Export creates a UTF-8 JSON of all completed workouts and opens native system sharing; empty history disables it, and system return is not a delivery receipt. FileSystem57.0.7/Sharing57.0.22 are direct dependencies. Temporary copies use a scoped cache with opportunistic 24h cleanup, not a guaranteed retention deadline. No import/restore is included.
+
+Current checks:181 tests/25 suites, type/lint, both JS/Hermes exports and Android test build pass. APK `1f3ed5f3ba3d` has not been exercised natively; Mac was locked. iPhone/system receiver/reader/device acceptance remain open. See [verification](../../specs/002-local-data-control/verification.md); all earlier device results below retain their original build scope.
+
+
 2026-10-12：修复保存期间通过已允许热链接进入旧详情的假读取错误，成功/回滚后自动继续读取。155项/19套、类型/lint和双平台JS/Hermes导出通过，独立审查无阻断；本次未构建新APK或完成原生专项。当前代码与下方10-07设备候选须分别看待。用户确认002历史页右上「数据」入口，内容/导出仍为讨论稿，B视觉保持。见[最新验证](../../specs/001-workout-session-loop/verification.md)。
 
 2026-10-07：B能量橙真实页面的配色、字号和密度获用户确认保持，并授权同步GitHub。当前本地候选`f3b396b26936`，153项/19套、类型/lint、双平台资源导出和Android构建通过；指定320dp/130%字号下录入、纠错、保存及离线重启已核验。iPhone、读屏、小屏日历方案与隐私门槛仍待。当前界面见[仓库内截图](../../docs/design/FRONTEND_REVIEW.md)，新鲜证据归属见[验证记录](../../specs/001-workout-session-loop/verification.md)。以下2026-10-02段落保留旧版本时点，不能代替B候选结果。
@@ -22,7 +39,7 @@
 
 ## 运行与验证
 
-环境：Node24（本机24.19.0），本轮使用npm11.9.0。第一次在其他环境执行需要联网安装锁文件依赖：
+环境：Node24；2026-10-13实测Node24.21.0，npm11。第一次在其他环境执行需要联网安装锁文件依赖：
 
 ```bash
 npm ci
@@ -32,7 +49,7 @@ npm run lint
 npx expo-doctor
 ```
 
-本机普通shell无Node/npm，可先使用任务目录中已校验的局部工具（不改全局安装）：
+早期环境没有全局Node/npm时使用以下本机局部工具；2026-10-13普通shell已可用Node24。以下为历史回退路径，不是其他机器的必需配置：
 
 ```bash
 export PATH="/Users/qqqq/Documents/Codex/2026-09-12/gen/work/expo-host-2026-09-16/tools/bin:/Users/qqqq/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:$PATH"
@@ -44,7 +61,7 @@ npm run typecheck
 npm run lint
 ```
 
-当前19个测试文件、153项：在9月26日146项基线上新增4项字段反馈/双语/跨页隔离、1项历史读屏语义、1项保存pending时热链接离开后的导航、1项历史写入等待状态回归。真实路由用例进一步覆盖持有SQL事务时的Loading与提交后刷新。数据测试使用Node24内置SQLite临时文件；路由联调使用真实ExpoRoot、Provider和SQL，仅替换原生打开边界。屏幕测试不模拟真实布局或键盘。Doctor21/21沿用2026-10-02同版本证据，最新修复未改依赖；audit15项未通过，不等同工程检查。
+当前25个测试文件、181项通过，覆盖训练/历史、快照/编码、文件生命周期、导出编排和数据面板。数据测试使用Node24内置SQLite临时文件；路由联调使用真实ExpoRoot、Provider和SQL，仅替换原生打开边界。屏幕测试不模拟真实布局或键盘。153项/19套和Doctor21/21属于2026-10-02历史时点；新增文件/分享依赖后没有重新声称完整Doctor或安全审计通过。最新检查与待办见002 verification。
 
 本轮沙箱如无法写项目原有缓存，可使用任务目录：
 
@@ -91,7 +108,7 @@ adb -s SERIAL shell am start -n dev.fitquest.local/.MainActivity
 
 1000场数据层：独立合成库1000/4000/20000，25样本P95列表7.893ms、日历14.659ms、详情1.185ms、保存12.485ms、删除1.405ms；同一热进程5次新连接打开/初始化/列表/关闭P95 11.243ms。1000场UI另在新空5584用旧00aba包观察：五次进程重启后日历可读，四卡15/13/11/09倒序、四动作20组详情滚动与返回选日通过，前后完整合成行相同。首窗口105/216/298/235/188ms、P50 216/P95 298ms只来自`am start -W`，不测完整UI就绪；gfx慢帧保留，SwiftShader及并行主机负载下不推导真机流畅或1秒目标。见[原始审查](/Users/qqqq/Documents/Codex/2026-09-12/gen/work/app-cycle-2026-10-02/logs/native-ui-1000-empty-avd/acceptance-review.md)。没有替换原5580的20场数据库。
 
-4f6等待态专项已独立核验通过，结论见[补充审查](/Users/qqqq/Documents/Codex/2026-09-12/gen/work/app-cycle-2026-10-02/logs/review-001-history-wait-2026-10-02.md)为准；此项不替代实体设备、iOS原生、全部Q008或用户验收。APK仍有INTERNET、本包signature receiver和allowBackup=true；此前已移除外存读写、悬浮窗和振动。002数据说明/导出仍DRAFT，未增加入口批准或真实数据许可。
+4f6等待态专项已独立核验通过，结论见[补充审查](/Users/qqqq/Documents/Codex/2026-09-12/gen/work/app-cycle-2026-10-02/logs/review-001-history-wait-2026-10-02.md)为准；此项不替代实体设备、iOS原生、全部Q008或用户验收。APK仍有INTERNET、本包signature receiver和allowBackup=true；此前已移除外存读写、悬浮窗和振动。当时002尚未批准；10月12日三轮确认后已实施，10月13日原生证据见本文顶部。真实数据许可仍未通过。
 
 ## 本步学习验收
 

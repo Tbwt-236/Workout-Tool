@@ -60,4 +60,13 @@ export interface WorkoutReadRepository extends WorkoutRepository {
 export interface WorkoutHistoryRepository extends WorkoutReadRepository {
   // Without confirmed === true, no database access occurs. Success means committed.
   deleteCompletedWorkout(id: number, confirmed: boolean): Promise<DeleteCompletedWorkoutResult>;
+  readExportSnapshot(): Promise<ReadExportSnapshotResult>;
 }
+
+export interface WorkoutExportSnapshot {
+  readonly snapshotAt: string;
+  readonly workouts: readonly CompletedWorkout[];
+}
+export type ReadExportSnapshotResult =
+  | { readonly ok: true; readonly snapshot: WorkoutExportSnapshot }
+  | { readonly ok: false; readonly code: 'Busy' | 'StorageUnavailable' | 'UnexpectedStorageError' };

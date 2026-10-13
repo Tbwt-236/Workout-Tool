@@ -52,7 +52,7 @@ export function WorkoutScreen({ onSaved, keyboardVerticalOffset = 0 }:
   const nameError = editor.name?.validationRequested && checkedName && !checkedName.ok
     ? feedbackMessage(locale, { code: 'ValidationError', field: checkedName.field, reason: checkedName.code }) : '';
   function finishRequest() {
-    if (saving || editor.name) return;
+    if (saving || app.readingExport || editor.name) return;
     if (dirty) setPrompt('unsaved'); else app.service.requestCompletion();
   }
   return <KeyboardAvoidingView style={styles.page} keyboardVerticalOffset={keyboardVerticalOffset} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -60,7 +60,7 @@ export function WorkoutScreen({ onSaved, keyboardVerticalOffset = 0 }:
       accessibilityElementsHidden={!!prompt || !!confirmation} importantForAccessibility={prompt || confirmation ? 'no-hide-descendants' : 'auto'}>
       <PageHeading title={zh ? '训练' : 'Train'}>
         <LanguageSwitch />
-        {draft && <Action primary disabled={saving || !!editor.name} onPress={finishRequest}>{copy.finish}</Action>}
+        {draft && <Action primary disabled={saving || app.readingExport || !!editor.name} onPress={finishRequest}>{copy.finish}</Action>}
       </PageHeading>
       {!draft ? <View style={styles.block}><Text style={styles.heading}>{zh ? '准备好，开始练。' : 'Ready when you are.'}</Text>
         <Action primary onPress={app.start}>{copy.start}</Action></View> : <>

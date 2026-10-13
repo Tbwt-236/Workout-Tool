@@ -5,15 +5,17 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 import { createExpoWorkoutRepository } from '../features/workouts/data/expo-workout-repository';
 import { WorkoutProvider, useWorkout } from '../features/workouts/application/workout-provider';
 import { Action, colors, styles } from '../features/workouts/ui/primitives';
+import { createNativeExportFiles } from '../features/data-control/data/native-export-files';
 export default function Layout() {
   const [repository] = useState(createExpoWorkoutRepository);
-  return <SafeAreaProvider><WorkoutProvider repository={repository}><Frame /></WorkoutProvider></SafeAreaProvider>;
+  const [exportFiles] = useState(createNativeExportFiles);
+  return <SafeAreaProvider><WorkoutProvider repository={repository} exportFiles={exportFiles}><Frame /></WorkoutProvider></SafeAreaProvider>;
 }
 function Frame() {
   const insets = useSafeAreaInsets();
   const pathname = usePathname(), router = useRouter();
-  const { locale, state, deleting } = useWorkout();
-  const saving = state.status === 'completing' || deleting;
+  const { locale, state, deleting, readingExport } = useWorkout();
+  const saving = state.status === 'completing' || deleting || readingExport;
   return <View style={[styles.page, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
     <StatusBar barStyle="dark-content" />
     <View style={{ flex: 1 }}><Slot /></View>

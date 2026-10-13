@@ -15,6 +15,7 @@ function setup(options: { failing?: boolean; pending?: boolean } = {}) {
   });
   const repository: WorkoutHistoryRepository = {
     initialize: async () => ({ ok: true }), saveCompletedWorkout: save,
+    readExportSnapshot: async () => ({ ok: false, code: 'StorageUnavailable' }),
     deleteCompletedWorkout: async () => ({ ok: false, code: 'NotFound' }),
     listCompletedWorkouts: async () => ({ ok: true, workouts: [] }),
     getCompletedWorkout: async () => ({ ok: false, code: 'NotFound' }),

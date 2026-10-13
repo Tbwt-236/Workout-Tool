@@ -1,71 +1,56 @@
 # Tasks: 本地数据说明与最小 JSON 导出
 
-**Date**: 2026-10-02 | **Status**: DRAFT — 全部实施项未开始
+**Updated**: 2026-10-13 | **Status**: 已实施，原生/用户/最终接受仍开放
 
-**Input**: 本目录 spec/plan/data-model/contracts/quickstart；界面、数据流和平台未决条件未获批准。
+[Spec](spec.md) · [Plan](plan.md) · [Verification](verification.md)。三轮用户答复已记录；旧候选清单/独立页/空集合用户导出任务已按批准范围与平台研究替换。单一代码写入者、其他代理只读审查。
 
-本任务表为候选工作，不因文档完整而执行或勾选，不修改 001 状态。只读研究可继续；代码实施先经过批准。每个代码任务单一写入者，行为按 RED→GREEN→验证→独立审查推进。
+## Phase 1: Scope and Research
 
-## Phase 1: Scope, Research and Approval
+- [x] T001 记录历史右上数据入口、第二版底部面板及“可以的”具体交互答复；空历史禁用、全量JSON、系统返回留面板均已确认。
+- [x] T002 核官方文件/分享接口和安装版本，明确void不是保存收据；记录备份资格、缓存工程策略及原生未验边界。设备核验另在T015。
+- [x] T003 统一spec/plan/model/contracts，记录依赖选择、24小时机会性清理的依据与限制、真实数据条件不变。
 
-- [ ] T001 在 spec Q1/Q2 与 checklist 记录真实入口/数据流答复，完成文字→低保真→可点击多轮；2026-10-12 已选 A 历史页右上「数据」，第二轮中英可点稿已准备，内容/导出/清理仍待，不据局部答复勾选。
-- [ ] T002 核实官方文件/分享接口、所需依赖、系统备份及安全清理条件，将证据和未决项记录在 plan；修订数据模型/契约。已有 Android 文档/源码线索不等于设备验收，24 小时不能当平台安全保证；额外用户同意机制另行研究，不预设法律结论。
-- [ ] T003 在 spec/plan 记录批准范围、JSON 候选格式、首验平台、依赖决定和最终清理规则；明确 001 T030 真实数据条件不变，未决安全点不能跳过。
+## Phase 2: Contracts and Interface
 
-## Phase 2: Foundational Contract
+- [x] T004 定义export-file-port、快照/任务类型；不加表、迁移、网络端口。
+- [x] T005 [US1] 测试空历史可达、中英、关闭保持输入/日历，再实现历史入口与data-sheet。实际测试路径为`__tests__/screens/data-sheet.test.tsx`。
 
-- [ ] T004 定义 apps/mobile/src/features/data-control/data/export-file-port.ts 及快照/任务类型，区分请求有效性、任务锁、文件归属及系统交接状态；不引入选择表、迁移、训练门禁或网络端口。
+## Phase 3: Snapshot and Encoding
 
-## Phase 3: US1 可随时查看说明
+- [x] T006 [US2] export-document测试白名单、UTC、Unicode、排序、null/整数重量与坏值拒绝；实现纯JSON编码。
+- [x] T007 [US2] `__tests__/data/export-snapshot.test.ts`测试真实SQLite空库/顺序/损坏/互斥；扩展只读快照，无训练schema变化。
+- [x] T008 [US2/US3] export-service测试单任务、早释放仓储锁、取消、写入迟到、锁收尾、失败重试、空历史；实现稳定状态和错误码。
 
-- [ ] T005 [US1] 在 apps/mobile/__tests__/data-control/data-notice-screen.test.tsx 先测获批入口、空历史可达、中英及返回保持输入/日历，再实现 src/features/data-control/ui/data-control-screen.tsx 说明部分和获批路由；关闭说明不产生接受状态，FR-001/FR-003/FR-004/FR-017。
+## Phase 4: Files and Handoff
 
-## Phase 4: US2 一致快照与编码
+- [x] T009 [US3] export-files测试真实临时文件UTF-8、partial→完整、move改变URI、写入/移动失败和归属保护；实现Expo文件适配。桥接用替身，原生另验。
+- [x] T010 [US3] 通过service/files测试显式一次分享、失败/void返回及保留；接入expo-sharing和可用性检查，不可用分支尚未单独测试。未声称测试替身解决SDK原生锁缺陷。
+- [x] T011 [US3] 测试专属目录/名称、活动/未来文件、删除失败后重试；实现启动及导出时24小时资格清理，无持久清单或后台任务。
+- [x] T012 [US3] 整合准备/重试/0场/返回；补快照未结束时关闭→详情等待，避免假读取错误和迟到分享。
 
-- [ ] T006 [US2] 在 apps/mobile/__tests__/data-control/export-document.test.ts 先测 UTF-8 JSON 往返、白名单、UTC、排序、单位/null 及无效值拒绝，再实现 src/features/data-control/domain/export-document.ts，FR-005–FR-007。
-- [ ] T007 [US2] 在 apps/mobile/__tests__/data-control/export-snapshot.test.ts 先测空历史、损坏拒绝、同日排序、与保存/删除互斥和单一快照，再扩展 src/features/workouts/data/workout-repository.ts、sqlite-workout-repository.ts 的只读快照端口，不改训练表，FR-008/FR-009。
-- [ ] T008 [US2/US3] 在 apps/mobile/__tests__/data-control/export-service.test.ts 先测未发起无副作用、单任务、仓储锁提前释放、交接前离页/后台取消、旧响应隔离和任务收尾解锁，再实现 src/features/data-control/application/export-service.ts；无第二次分享确认，FR-005/FR-010–FR-012。
+## Phase 5: Evidence and Acceptance
 
-## Phase 5: US3 文件、系统交接与恢复
-
-- [ ] T009 [US3] 在 apps/mobile/__tests__/data-control/export-files.test.ts 先测归属登记先于写入、登记失败不建文件、partial/完整提交、受控路径及各中断点，再按 T002 实现 src/features/data-control/data/native-export-files.ts 文件部分，FR-010/FR-014/FR-016。
-- [ ] T010 [US3] 在 apps/mobile/__tests__/data-control/export-sharing.test.ts 先测单次显式发起后直接系统选择、不可用、结果未知、重复/迟到回调、交接标记写失败不分享，再实现 native-export-files.ts 分享适配和 export-service.ts 收尾。Android Promise<void> 不模拟为已取消/已保存证据，FR-010–FR-013。
-- [ ] T011 [US3] 在 apps/mobile/__tests__/data-control/export-cleanup.test.ts 先测清单/目录对账、缺失/partial/孤儿完整文件、未知交接保护、活动文件保护、清理失败重试及异常时钟，再实现受控恢复/清理；只采用 T003 批准的安全规则，FR-014–FR-016。
-- [ ] T012 [US3] 在 apps/mobile/__tests__/data-control/export-screen.test.tsx 先测范围说明、0场、单次发起、生成进度、离页、失败/结果未知及返回不丢输入/月份，再整合获批 data-control-screen.tsx，FR-004/FR-009–FR-013/FR-017。
-
-## Phase 6: Integrity, Device Evidence and Review
-
-- [ ] T013 用 apps/mobile/__tests__/data-control/export-integrity.test.ts 的真实桌面 SQLite 建立 1000 场/4000 动作/20000 组夹具，核全部字段及20次保存/删除交错，记录分段耗时/大小与桌面边界于 verification.md，SC-002/SC-003；不是手机性能通过。
-- [ ] T014 运行完整 Jest、typecheck、lint 和实际需要的构建检查，记录当前151项/19套原基线与新增回归的真实结果，不预填通过。
-- [ ] T015 执行 quickstart Q-001–Q-007，记录实际设备文件/分享返回/中断恢复/清理/备份配置及320/键盘/读屏证据，SC-001/SC-004/SC-006；没有原生证据保持待办。
-- [ ] T016 用5名目标用户的合成数据操作执行 Q-008，验证找入口和解释文件去向，记录匿名结果及学习验收，SC-005；招募仍由产品负责人管理。
-- [ ] T017 按 requesting-code-review 审查本功能和001回归，记录问题处置与阶段反思，按批准范围建立本地Git检查点，不覆盖已有改动。
-- [ ] T018 汇总数据流/同意审查、原生、用户及学习证据，更新本目录验收记录，复核001 T030依赖。任务完成不自动等于真实数据可使用或001里程碑完成，按实际证据由负责人接受。
-
-## Dependencies and Incremental Strategy
-
-T001 与只读 T002 可以并行；两者未决事项经 T003 批准后，才能开启 T004 及实现。T005 说明页、T006/T007 纯编码与快照可按单一写入者分批推进；T008编排→T009文件→T010交接→T011恢复→T012界面整合，每步有新鲜验证。T013–T018汇总真实证据，不用替身冒充平台完成。
-
-原草案的版本化选择规则、选择存储/迁移、记录许可服务及撤回清稿任务已删除。本目录共18项，均未勾选；现阶段仅修订文档和必要研究。
+- [ ] T013 1000场/4000动作/20000组逐字段及20轮交错通过；新增25样本桌面分段基准与3,039,757字节文件，三段P95 78.838ms。设备分段性能/系统等待仍待，不以桌面结果勾完。
+- [x] T014 完整181项/25套、typecheck、lint、iOS/Android JS/Hermes导出及Android本地构建通过，证据见verification。
+- [ ] T015 Android16模拟器已覆盖本地测试接收/系统取消/返回/再次导出、分享期间终止后重启、启动缓存清理、中英320dp/130%面板及英文说明滚动关闭。原数据库完全不变。全套中断故障、键盘/草稿组合、备份/恢复、TalkBack及iPhone仍待；不标记Q-001–Q-007全通过。
+- [ ] T016 5名目标用户合成数据验收，至少4名30秒内找到并理解文件去向；学习掌握分别记录。
+- [x] T017 独立代码与产物审查完成，非阻断测试缺口已补；本地检查点`6522bd11d884`已建立并核176/176文件一致，当前分支及真实暂存区不变。10月13日新增原生证据和基准审查，GitHub同步结果另留回执。
+- [ ] T018 汇总原生、用户和隐私证据后由负责人接受；001 T030/T029/T031/T033保持开放。
 
 ## Coverage
 
-| 需求/结果 | 任务 |
+| 要求 | 任务/证据 |
 | --- | --- |
-| FR-001 | T005、T015 |
-| FR-002 | T001–T003、T018 |
-| FR-003/FR-004 | T004、T005、T012、T014 |
-| FR-005–FR-007 | T006、T008、T012、T013 |
-| FR-008/FR-009 | T007、T012、T013 |
+| FR-001–FR-004 | T001–T005、T012、T015、T018 |
+| FR-005–FR-009 | T006–T008、T012–T014 |
 | FR-010–FR-013 | T008–T010、T012、T015 |
-| FR-014–FR-016 | T002、T003、T009–T011、T015 |
+| FR-014–FR-016 | T002/T003、T009–T011、T015 |
 | FR-017 | T005、T012、T015 |
-| SC-001 | T005、T012、T014、T015 |
-| SC-002/SC-003 | T006、T007、T013 |
-| SC-004 | T008–T012、T015 |
-| SC-005 | T016 |
-| SC-006 | T015 |
+| SC-001–SC-004 | 已有自动测试；原生中断与分享仍待T015 |
+| SC-005/SC-006 | T015/T016 |
+
+当前14/18完成。阶段反思：设计答复、桌面代码验证和原生验收是不同证据；下一步补iPhone分享、剩余中断/读屏与目标用户验证，不用桌面或模拟器结果代替。
 
 ## 本步学习验收
 
-目标 L2：从 FR-012 找到 T008/T010/T015，解释取消意图、系统返回和设备证据的区别；批准范围取舍目标 L3。汇报：“任务已缩为说明和导出18项，全部实施未开始，没有训练许可或清稿任务。”未掌握时重做需求→任务→证据映射，不以数量代替结果。
+需求→任务→证据映射L2，验收范围取舍L3。练习从FR-013找出对应测试与待办设备证据，解释181项通过为何不等于App可上线。可汇报：“数据导出已实现并完成自动化核验，原生和用户闸门仍开放。”未达标时重做映射；任务产物完成不等于本人学习完成。

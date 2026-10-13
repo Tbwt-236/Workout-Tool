@@ -11,8 +11,8 @@ export function WorkoutSummary(props: SummaryProps) {
   return <SummaryContent key={props.id} {...props} />;
 }
 function SummaryContent({ id, onBack, deletable = false }: SummaryProps) {
-  const { repository, locale, state, deleting, removeWorkout } = useWorkout();
-  const writePending = state.status === 'completing' || deleting;
+  const { repository, locale, state, deleting, readingExport, removeWorkout } = useWorkout();
+  const writePending = state.status === 'completing' || deleting || readingExport;
   const [confirming, setConfirming] = useState(false);
   const [deleteFailed, setDeleteFailed] = useState(false);
   const confirmationConsumed = useRef(false);
@@ -64,7 +64,7 @@ function SummaryContent({ id, onBack, deletable = false }: SummaryProps) {
         {deletable && <>
           {deleting && <Text style={styles.muted} accessibilityLiveRegion="polite">{zh ? '删除中…' : 'Deleting…'}</Text>}
           {deleteFailed && <Text style={styles.error} accessibilityRole="alert">{zh ? '尚未删除，请重试' : 'Not deleted. Retry.'}</Text>}
-          <Action danger disabled={deleting} onPress={() => { confirmationConsumed.current = false; setConfirming(true); }}>{deleteFailed ? copy.retry : copy.remove}</Action>
+          <Action danger disabled={deleting || readingExport} onPress={() => { confirmationConsumed.current = false; setConfirming(true); }}>{deleteFailed ? copy.retry : copy.remove}</Action>
         </>}
       </>}
     </ScrollView>

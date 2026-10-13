@@ -1,0 +1,29 @@
+{
+  "fitquest.db": {
+    "counts": {
+      "workouts": 20,
+      "exercises": 20,
+      "sets": 20
+    },
+    "allRowsIdentical": true,
+    "beforeSha256": "17205ab3bf76210f2f34aa14dd9391dcb327d064163e6105742fded3c6e45191",
+    "afterSha256": "17205ab3bf76210f2f34aa14dd9391dcb327d064163e6105742fded3c6e45191",
+    "byteIdentical": true
+  },
+  "fitquest-benchmark.db": {
+    "counts": {
+      "workouts": 1000,
+      "exercises": 4000,
+      "sets": 20000
+    },
+    "allRowsIdentical": true,
+    "beforeSha256": "83c6da212f3100e4e378fca8db809e26aeb870b4f70fd52a697154d305916171",
+    "afterSha256": "83c6da212f3100e4e378fca8db809e26aeb870b4f70fd52a697154d305916171",
+    "byteIdentical": true
+  },
+  "receiverRepeat": {
+    "allWorkoutsIdentical": true,
+    "bytes": 8061,
+    "timestampsDiffer": true
+  }
+}
