@@ -1,12 +1,12 @@
 # 2026-10-12 系统分享与临时文件研究
 
-状态：只读研究与候选方案；用户只确认历史页右上「数据」入口，未批准 JSON、直接依赖、缓存期限或系统交接流程。没有安装依赖、生成实际导出文件、开启真实数据使用或发布 App。
+状态：研究已用于本轮实施。用户三轮确认入口、底部面板及JSON/空历史禁用/系统返回流程；24小时阈值由工程依据下述研究采用，不声称用户明确指定。已安装官方SDK匹配依赖并实现文件适配；原生验收和真实数据条件未关闭。
 
 ## 结论与成本取舍
 
 通用分享接口无法证明任意接收方已经读完文件。继续增加持久化交接清单和未知状态隔离，仍不能产生这项证据。因此 10-02 草案的“仅在证明安全点后清理”条件需要调整，而非直接照其开发复杂恢复机制。
 
-候选改为：专属缓存目录、唯一文件名、partial 写入成功后提交、单任务锁与离页失效保护；不持久化分享阶段清单。分享返回只结束本次界面任务，不立即删除完整文件。启动或下次导出时尝试清除超过约定期限的完整副本，跳过当前任务，失败下次再试。24 小时只是待确认的保留策略候选，**不是接收方已读完、安全擦除或实际保留上限的证明**。系统提前清理或接收方迟读可能需要重新导出。
+本轮采用：专属缓存目录、唯一文件名、partial 写入成功后提交、单任务锁与离页失效保护；不持久化分享阶段清单。分享返回只结束本次界面任务，不立即删除完整文件。启动或下次导出时尝试清除超过约定期限的完整副本，跳过当前任务，失败下次再试。24 小时是工程保留策略，**不是接收方已读完、安全擦除或实际保留上限的证明**。系统提前清理或接收方迟读可能需要重新导出。
 
 这项取舍省去持久清单的写入、对账和迁移成本，不增加后台定时任务或云服务；不能据此承诺工期或全平台已验证。若要求完全避免第三方迟读失效，应改为用户选目录、应用自行完成写入的流程，并重新确认交互。当前不同时开发两条方案。
 
@@ -16,7 +16,7 @@
 - Expo SDK57 [iOS SharingModule](https://github.com/expo/expo/blob/sdk-57/packages/expo-sharing/ios/SharingModule.swift)：完成回调 resolve(void)，未向 JS 暴露 completed 或错误参数。[Apple 完成回调](https://developer.apple.com/documentation/uikit/uiactivityviewcontroller/completionwithitemshandler-swift.typealias)也不是任意第三方的远端送达或永久保存收据。
 - [Android 缓存文档](https://developer.android.com/training/data-storage/app-specific#internal-remove-cache)与 [Apple 文件系统说明](https://developer.apple.com/documentation/foundation/using-the-file-system-effectively)：缓存适合可重新生成内容，系统可能删除；应用不能依赖系统及时清理或保证保留多久。[Apple 备份说明](https://developer.apple.com/documentation/foundation/optimizing-your-app-s-data-for-icloud-backup)不代表训练库或接收方副本的所有备份路径已核验。
 
-这是 SDK57 分支与官方文档的研究时点，不是未来安装包的不可变源码证明。实施前须将实际锁定的 FileSystem/Sharing 版本与原生源码复核。当前本地间接 FileSystem 为 57.0.7，Sharing 未安装；bundledNativeModules 建议 ~57.0.22。直接使用时才经批准声明直接依赖，不开启入站分享或 Share Extension。
+这是 SDK57 分支与官方文档的研究时点，不是未来安装包的不可变源码证明。实施前须将实际锁定的 FileSystem/Sharing 版本与原生源码复核。本轮已锁定并逐项读取实际安装源码：FileSystem 57.0.7、Sharing 57.0.22，与bundledNativeModules一致，均声明直接依赖。不启用入站分享或Share Extension。File.write/delete同步；File.move返回Promise且变更原File.uri，已固定两个URI并等待move；mtime单位为毫秒。
 
 ## 文案与验收边界
 
@@ -24,8 +24,10 @@
 
 原生验收须覆盖：iOS 保存至本机“文件”及取消；Android 支持的本地接收路径；返回后重导出；写入/分享期间终止进程；缓存消失、清理失败、过期扫描及作用域。只用合成 JSON 核对接收字段和数量，证明不清理训练库或用户副本。这些结果只能覆盖实际测试路径，不能证明所有第三方应用。
 
-Q2 待确认后统一修订数据模型、契约和 T009–T011；目前旧草案仍标为候选，未开始产品代码。
+旧草案已据实际答复和API证据统一修订，详见spec/model/contracts。Android实际SharingFileProvider未导出但允许URI授权，底层配置映射files/cache/external根；产品适配器限定cache/fitquest-exports的活动JSON。不能把产品范围说成provider配置范围。
+
+已安装SharingModule.kt在设置pendingPromise后启动Activity，启动异常的catch未清空该字段；同进程重试可能继续SharingInProgress。本轮未修改依赖，错误文案提供重试/必要时重启，原生故障验证仍待。iOS从RN Modal打开分享的叠层需设备检查；桌面替身成功不证明这些问题已解决。
 
 ## 本步学习验收
 
-分享返回、接收方保存和缓存清理：目标 L2（能照做）。练习对照系统取消与成功保存两种路径，指出哪种事实由谁证明，再解释为什么不显示“已成功发送”。可汇报：“导出采用可重新生成文件的候选方案，外部保存须在接收应用确认，原生验证与方案批准尚待。”未达标时重读平台边界并重新走查。研究产物已完成；产品决定与本人学习掌握分别待验收。
+分享返回、接收方保存和缓存清理：目标 L2（能照做）。练习对照系统取消与成功保存两种路径，指出哪种事实由谁证明，再解释为什么不显示“已成功发送”。可汇报：“导出采用可重新生成的缓存文件，外部保存须在接收应用确认，原生验证尚待。”未达标时重读平台边界并重新走查。研究产物已完成；原生结果与本人学习掌握分别待验收。

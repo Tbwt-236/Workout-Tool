@@ -1,8 +1,20 @@
 # FitQuest agent instructions
 
+## 2026-10-13 continuation — current evidence
+
+User explicitly authorized ADB automation of the task-owned Android emulator after CUA could not identify its window. APK `1f3ed5f3ba3d` was installed without resetting synthetic data. Actual local diagnostic receiver read the 8,061-byte, 20-workout JSON; cancellation, return and repeat export were observed. 320dp/130% Chinese/English sheet, English detail scrolling/close, process termination during chooser then restart without automatic sharing, and scoped startup cache cleanup have evidence. Both existing databases are byte-identical before/after (20/20/20 and separate 1000/4000/20000). Diagnostic receiver removed; density420/font1.0 restored.
+
+Fresh181/25, type/lint and 25-sample desktop export benchmark pass. Added `benchmark:export` only; 34 production source hashes and dependency lock still match the archived APK inputs. Package.json differs by the benchmark script, so do not claim its entire hash still matches. No new native build was needed for this measurement/docs-only continuation. Desktop 3,039,757-byte output and P95 78.838ms are not phone performance. Independent reviews found no blockers for this scope. Full device fault injection, iPhone, keyboard/draft combinations, TalkBack, backup/restore, five-user and privacy acceptance remain open: 00129/33, 00214/18. The dated10-12 lock-screen limitation below is historical. Preserve current visuals; see 002 verification for exact coverage and sync record.
+
 ## 2026-10-12 continuation
 
-The owner confirmed 002 entry A: Data at the top right of History, reachable with empty history. Content, JSON/export and cache policy still await review; the bilingual interactive preview is discussion material only. The approved 001 detail screen now defers a new read while an app-owned save/delete is pending, retaining already loaded details and deletion outcomes. Two real Router/desktop SQLite commit/rollback regressions bring fresh Jest to 155/19; type/lint and iOS/Android JS/Hermes exports pass, independent code review has no blockers. This change has not been rebuilt or exercised on a native device; the 10-07 APK and screenshots remain historical evidence. Preserve B visuals. See the latest verification and 002 research; do not infer whole-feature approval from the entry choice.
+The owner confirmed the History top-right Data entry, then “第二版” (bottom sheet), then “可以的” to the explicit JSON/all-completed/empty-disabled/system-return-to-sheet flow. These choices authorize implementation and are settled; do not ask them again. Native/device acceptance remains separate. Preserve B visuals and existing workout/calendar behavior.
+
+002 is now implemented: single SQLite snapshot, JSON whitelist, native Expo file/share adapter, scoped cache cleanup and bilingual sheet. Fresh 181 tests/25 suites, type/lint, iOS/Android JS/Hermes exports and Android build pass. Direct dependencies are FileSystem57.0.7 and Sharing57.0.22. The archived local APK is `1f3ed5f3ba3d` (arm64, debug signature, temporary dev.fitquest.local); 34/34 source files and package/lock match staging. The 24-hour opportunistic cache policy is an engineering choice disclosed in copy, not a platform receipt or user-quoted duration.
+
+Independent code/artifact reviews found no blockers; one test gap is fixed. CUA reported Mac locked, so this new APK has NOT been installed/exercised this turn; do not transfer older native evidence. Physical/iOS, system receiver/cancel/retry, small-screen/reader, backup and five-user/privacy acceptance remain open. Known Android Sharing start-activity failure may retain native pendingPromise; retry/restart copy is not proof of a dependency fix. See specs/002-local-data-control/verification.md and tasks.md. 001 remains29/33 with T029/T030/T031/T033 open. No release, real-data gate bypass, new cloud/account or automation resumption.
+
+The earlier same-day detail-read guard (commit/rollback after app-owned writes) remains, now extended to pending export snapshots. Closing a sheet does not release the read lock early; the cross-page regression is included in 181/25. Older counts below are historical.
 
 ## 2026-10-07 visual update
 

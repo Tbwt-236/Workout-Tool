@@ -85,6 +85,32 @@ export function createSqliteWorkoutRepository(open: () => Promise<SqliteConnecti
   }
 
   return {
+    async readExportSnapshot() {
+      if (busy) return { ok: false, code: 'Busy' };
+      busy = true;
+      let db: SqliteConnection | null = null;
+      try {
+        db = await ready();
+        if (!db) return { ok: false, code: 'StorageUnavailable' };
+        const snapshotAt = new Date().toISOString();
+        // SQLite gives this single statement one snapshot; no list/detail gap or long transaction.
+        const rows = await db.getAllAsync<DetailRow>(`SELECT w.id, w.started_at, w.completed_at, w.duration_seconds,
+          e.id AS exercise_id, e.name, e.position AS exercise_position,
+          s.id AS set_id, s.position AS set_position, s.reps, s.weight_tenths_kg
+          FROM workouts w LEFT JOIN exercises e ON e.workout_id = w.id
+          LEFT JOIN sets s ON s.exercise_id = e.id
+          ORDER BY w.completed_at DESC, w.id DESC, e.position, s.position`);
+        const groups = new Map<number, DetailRow[]>();
+        for (const row of rows) {
+          const group = groups.get(row.id);
+          if (group) group.push(row); else groups.set(row.id, [row]);
+        }
+        return { ok: true, snapshot: { snapshotAt, workouts: Array.from(groups.values(), readAggregate) } };
+      } catch {
+        if (db) await discard(db);
+        return { ok: false, code: 'UnexpectedStorageError' };
+      } finally { busy = false; }
+    },
     async deleteCompletedWorkout(id, confirmed) {
       // Check consent and ID before opening SQLite, even if another operation is busy.
       if (confirmed !== true) return { ok: false, code: 'NotConfirmed' };

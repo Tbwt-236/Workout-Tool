@@ -13,7 +13,9 @@ portfolio project into a production-oriented mobile fitness app.
 
 ## Current state
 
-2026-10-12: fixed a false history-detail read error when a native link opens an existing workout during a pending save. Both commit and rollback now release the waiting detail read. Fresh 155 tests / 19 suites, type/lint and iOS/Android JS/Hermes exports pass; native revalidation of this fix remains pending. The History “Data” entry is approved, while its content/export flow remains a reviewed prototype awaiting feedback. B visuals are unchanged.
+2026-10-13: Android validation now covers the approved Data sheet, native JSON reception by a local test app, system cancellation/return and repeat export. Chinese/English sheets were observed at 320dp with 130% font. The existing synthetic training data is preserved. A reproducible 1,000-workout desktop export benchmark is included; it does not establish phone performance. Physical iPhone, screen-reader, user/privacy and remaining interruption cases are still open. See [current evidence](specs/002-local-data-control/verification.md).
+
+2026-10-12: the owner approved the History Data entry, bottom sheet and JSON export flow. The real app now exports all completed workouts through a consistent SQLite snapshot and native system sharing; empty history disables export, and returning from the system stays in the sheet without claiming delivery. Fresh 181 tests / 25 suites, type/lint, iOS/Android JS/Hermes exports and the Android test build pass. New local APK `1f3ed5f3ba3d` is arm64 with a debug signature; native sharing, iPhone, accessibility and user/privacy acceptance remain pending. B visuals are unchanged. See [002 verification](specs/002-local-data-control/verification.md) and [device validation steps](specs/002-local-data-control/quickstart.md).
 
 2026-10-07: the owner chose B, now implemented as bright orange / ink navy / mist-white real UI. Local candidate `f3b396b26936` has fresh 153-test, type/lint, export/build checks and targeted synthetic 320dp/130% font/save/reopen evidence. The owner confirmed the current type size, palette and density. iPhone acceptance remains pending. See [dated verification](specs/001-workout-session-loop/verification.md). The following native scenarios retain their original 2026-10-02 build scope.
 
@@ -26,6 +28,12 @@ Real Android runtime screenshots from a Mac emulator, using synthetic data. Chin
 | ![Training](docs/design/screenshots/2026-10-07/training-zh.png) | ![Calendar history](docs/design/screenshots/2026-10-07/history-zh.png) |
 
 [English training](docs/design/screenshots/2026-10-07/training-en.png) · [English history](docs/design/screenshots/2026-10-07/history-en.png) · [Design decisions](docs/design/FRONTEND_REVIEW.md)
+
+| Data sheet · Chinese | Data sheet · English |
+| --- | --- |
+| ![Chinese data sheet](docs/design/screenshots/2026-10-13/data-zh.png) | ![English data sheet](docs/design/screenshots/2026-10-13/data-en.png) |
+
+These are actual Android screenshots of APK `1f3ed5f3ba3d`, using 20 synthetic workouts. The export receiver used for validation is a separate local diagnostic app, not a cloud destination.
 
 ### Run the mobile app
 
@@ -125,8 +133,8 @@ docs/
   learning/            # Learning notes tied to features
 ```
 
-Continue from `specs/001-workout-session-loop/tasks.md`. The first domain batch
-and Expo training/save/history/delete flow are implemented; remaining small-screen,
-accessibility and usability acceptance, followed by the privacy/export slice once approved,
-are next. The privacy/export specification is still a draft. Native links are restricted to known paths;
+Continue from `specs/002-local-data-control/tasks.md` and the remaining acceptance
+items in `specs/001-workout-session-loop/tasks.md`. Training/save/history/delete and
+the approved Data sheet/JSON export are implemented. Remaining device, accessibility,
+usability and privacy evidence is required before final acceptance. Native links are restricted to known paths;
 the upstream URL-decoder dependency advisory remains open.

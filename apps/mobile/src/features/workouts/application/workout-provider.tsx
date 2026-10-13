@@ -1,8 +1,13 @@
-import { createContext, useContext, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
+import { AppState } from 'react-native';
 import { initialWorkoutState, workoutReducer, type WorkoutAction, type WorkoutState } from './workout-reducer';
 import { createWorkoutService } from './workout-service';
 import type { WorkoutHistoryRepository, DeleteCompletedWorkoutResult } from '../data/workout-repository';
 import type { WorkoutLocale } from '../../../i18n/workout-copy';
+import type { ExportFiles } from '../../data-control/data/export-file-port';
+import { createExportService } from '../../data-control/application/export-service';
+const unavailableFiles: ExportFiles = { cleanup: async () => {}, isSharingAvailable: async () => false,
+  write: async () => { throw new Error('File host required'); }, share: async () => { throw new Error('Share host required'); }, release: async () => {} };
 export interface SetFields { reps: string; weight: string; dirty: boolean; validationRequested?: boolean }
 export interface EditorState {
   fields: Record<string, SetFields>;
@@ -26,8 +31,16 @@ function createStore(repository: WorkoutHistoryRepository, clock: () => string) 
   return { getState, transition, nextKey, service, getCompletedAt: () => completedAt,
     subscribe(listener: () => void) { listeners.add(listener); return () => { listeners.delete(listener); }; } };
 }
-function useController(repository: WorkoutHistoryRepository, clock: () => string) {
+function useController(repository: WorkoutHistoryRepository, clock: () => string, files: ExportFiles) {
   const [store] = useState(() => createStore(repository, clock));
+  const [exporter] = useState(() => createExportService({ repository, files, now: clock }));
+  const exportState = useSyncExternalStore(exporter.subscribe, exporter.getState, exporter.getState);
+  const readingExport = exportState.phase === 'snapshotting';
+  useEffect(() => {
+    void exporter.cleanup();
+    const subscription = AppState.addEventListener('change', status => { if (status !== 'active') exporter.cancelPending(); });
+    return () => { subscription.remove(); exporter.cancelPending(); };
+  }, [exporter]);
   const state = useSyncExternalStore(store.subscribe, store.getState, store.getState);
   const { transition, nextKey, service } = store;
   const [locale, setLocale] = useState<WorkoutLocale>('zh');
@@ -38,10 +51,10 @@ function useController(repository: WorkoutHistoryRepository, clock: () => string
   const [deleting, setDeleting] = useState(false);
   const deleteLock = useRef(false);
   return { state, transition, service, locale, setLocale, editor, setEditor, repository, nextKey,
-    calendarDate, setCalendarDate, selectedDate, setSelectedDate, revision, deleting,
+    calendarDate, setCalendarDate, selectedDate, setSelectedDate, revision, deleting, exporter, exportState, readingExport,
     async removeWorkout(id: number, confirmed: boolean): Promise<DeleteCompletedWorkoutResult> {
       if (confirmed !== true) return { ok: false, code: 'NotConfirmed' };
-      if (deleteLock.current || store.getState().status === 'completing') return { ok: false, code: 'Busy' };
+      if (deleteLock.current || store.getState().status === 'completing' || exporter.getState().phase === 'snapshotting') return { ok: false, code: 'Busy' };
       deleteLock.current = true; setDeleting(true);
       try {
         const result = await repository.deleteCompletedWorkout(id, true);
@@ -59,6 +72,7 @@ function useController(repository: WorkoutHistoryRepository, clock: () => string
     },
     resetEditor() { setEditor(emptyEditor()); },
     async finish() {
+      if (exporter.getState().phase === 'snapshotting') return { ok: false as const, code: 'Busy' as const };
       const result = await service.completeWorkout(true);
       if (result.ok) {
         setEditor(emptyEditor()); setRevision(value => value + 1);
@@ -70,11 +84,11 @@ function useController(repository: WorkoutHistoryRepository, clock: () => string
   };
 }
 const Context = createContext<ReturnType<typeof useController> | null>(null);
-export function WorkoutProvider({ children, repository, now = () => new Date().toISOString() }:
-  { children: ReactNode; repository: WorkoutHistoryRepository; now?: () => string }) {
+export function WorkoutProvider({ children, repository, now = () => new Date().toISOString(), exportFiles = unavailableFiles }:
+  { children: ReactNode; repository: WorkoutHistoryRepository; now?: () => string; exportFiles?: ExportFiles }) {
   // One stable state container and service per app lifecycle, across routes and language changes.
-  const [dependencies] = useState(() => ({ repository, now }));
-  const controller = useController(dependencies.repository, dependencies.now);
+  const [dependencies] = useState(() => ({ repository, now, exportFiles }));
+  const controller = useController(dependencies.repository, dependencies.now, dependencies.exportFiles);
   return <Context.Provider value={controller}>{children}</Context.Provider>;
 }
 export function useWorkout() {

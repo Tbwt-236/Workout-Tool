@@ -16,13 +16,16 @@
     "test:domain": "jest --runInBand __tests__/domain",
     "benchmark:history": "node scripts/benchmark-history.ts",
     "test:ci": "jest --runInBand",
-    "test": "jest --watch"
+    "test": "jest --watch",
+    "benchmark:export": "node scripts/benchmark-export.ts"
   },
   "dependencies": {
     "expo": "~57.0.26",
     "expo-constants": "~57.0.20",
+    "expo-file-system": "~57.0.7",
     "expo-linking": "~57.0.11",
     "expo-router": "~57.0.24",
+    "expo-sharing": "~57.0.22",
     "expo-sqlite": "~57.0.3",
     "expo-status-bar": "~57.0.1",
     "expo-system-ui": "57.0.4",

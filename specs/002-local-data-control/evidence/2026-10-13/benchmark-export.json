@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-13T13:53:07.317Z",
+  "scope": "desktop-node-sqlite-and-node-file-io-only",
+  "synthetic": true,
+  "host": {
+    "platform": "darwin",
+    "release": "27.0.0",
+    "arch": "arm64",
+    "node": "v24.21.0"
+  },
+  "totals": {
+    "workouts": 1000,
+    "exercises": 4000,
+    "sets": 20000
+  },
+  "repetitions": 25,
+  "initializeMs": 5.2073330000000055,
+  "seedMs": 266.893625,
+  "utf8Bytes": 3039757,
+  "statistics": {
+    "snapshotMs": {
+      "median": 53.21291599999995,
+      "p95": 60.591499999999996,
+      "max": 68.75033399999995
+    },
+    "encodeDocumentMs": {
+      "median": 10.65508299999965,
+      "p95": 15.638457999999957,
+      "max": 21.740291999999954
+    },
+    "nodeFileGenerateMs": {
+      "median": 4.0812499999999545,
+      "p95": 5.15300000000002,
+      "max": 6.689458000000002
+    },
+    "totalMs": {
+      "median": 68.65604100000019,
+      "p95": 78.83808299999998,
+      "max": 88.85325
+    }
+  },
+  "samples": [
+    {
+      "snapshotMs": 68.75033399999995,
+      "encodeDocumentMs": 13.413458000000048,
+      "nodeFileGenerateMs": 6.689458000000002,
+      "totalMs": 88.85325
+    },
+    {
+      "snapshotMs": 58.964999999999975,
+      "encodeDocumentMs": 15.638457999999957,
+      "nodeFileGenerateMs": 4.234625000000051,
+      "totalMs": 78.83808299999998
+    },
+    {
+      "snapshotMs": 55.11258299999997,
+      "encodeDocumentMs": 14.709250000000111,
+      "nodeFileGenerateMs": 4.009916999999973,
+      "totalMs": 73.83175000000006
+    },
+    {
+      "snapshotMs": 58.583624999999984,
+      "encodeDocumentMs": 10.530750000000012,
+      "nodeFileGenerateMs": 4.560333000000014,
+      "totalMs": 73.67470800000001
+    },
+    {
+      "snapshotMs": 53.924166000000014,
+      "encodeDocumentMs": 10.56291699999997,
+      "nodeFileGenerateMs": 4.049541999999974,
+      "totalMs": 68.53662499999996
+    },
+    {
+      "snapshotMs": 55.891917000000035,
+      "encodeDocumentMs": 10.518624999999929,
+      "nodeFileGenerateMs": 4.152125000000069,
+      "totalMs": 70.56266700000003
+    },
+    {
+      "snapshotMs": 54.874416,
+      "encodeDocumentMs": 10.323417000000063,
+      "nodeFileGenerateMs": 4.0812499999999545,
+      "totalMs": 69.27908300000001
+    },
+    {
+      "snapshotMs": 52.16674999999998,
+      "encodeDocumentMs": 10.212583999999879,
+      "nodeFileGenerateMs": 3.915958000000046,
+      "totalMs": 66.2952919999999
+    },
+    {
+      "snapshotMs": 52.85945800000013,
+      "encodeDocumentMs": 10.643583000000035,
+      "nodeFileGenerateMs": 5.15300000000002,
+      "totalMs": 68.65604100000019
+    },
+    {
+      "snapshotMs": 60.591499999999996,
+      "encodeDocumentMs": 11.498541999999816,
+      "nodeFileGenerateMs": 4.010999999999967,
+      "totalMs": 76.10104199999978
+    },
+    {
+      "snapshotMs": 56.26066700000001,
+      "encodeDocumentMs": 10.614583000000039,
+      "nodeFileGenerateMs": 4.168458999999984,
+      "totalMs": 71.04370900000004
+    },
+    {
+      "snapshotMs": 55.791833,
+      "encodeDocumentMs": 10.797000000000025,
+      "nodeFileGenerateMs": 3.9906670000000304,
+      "totalMs": 70.57950000000005
+    },
+    {
+      "snapshotMs": 53.21291599999995,
+      "encodeDocumentMs": 10.134459000000106,
+      "nodeFileGenerateMs": 4.134499999999889,
+      "totalMs": 67.48187499999995
+    },
+    {
+      "snapshotMs": 50.22149999999988,
+      "encodeDocumentMs": 10.123333000000002,
+      "nodeFileGenerateMs": 3.9679590000000644,
+      "totalMs": 64.31279199999994
+    },
+    {
+      "snapshotMs": 50.502792,
+      "encodeDocumentMs": 9.87279199999989,
+      "nodeFileGenerateMs": 4.293875000000071,
+      "totalMs": 64.66945899999996
+    },
+    {
+      "snapshotMs": 50.7951250000001,
+      "encodeDocumentMs": 12.357916999999816,
+      "nodeFileGenerateMs": 4.355167000000165,
+      "totalMs": 67.50820900000008
+    },
+    {
+      "snapshotMs": 51.72616700000003,
+      "encodeDocumentMs": 12.427249999999958,
+      "nodeFileGenerateMs": 4.030708000000004,
+      "totalMs": 68.184125
+    },
+    {
+      "snapshotMs": 52.57316600000013,
+      "encodeDocumentMs": 12.93204199999991,
+      "nodeFileGenerateMs": 3.9080830000000333,
+      "totalMs": 69.41329100000007
+    },
+    {
+      "snapshotMs": 52.692374999999856,
+      "encodeDocumentMs": 21.740291999999954,
+      "nodeFileGenerateMs": 4.204417000000149,
+      "totalMs": 78.63708399999996
+    },
+    {
+      "snapshotMs": 50.22937499999989,
+      "encodeDocumentMs": 11.755417000000307,
+      "nodeFileGenerateMs": 3.961707999999817,
+      "totalMs": 65.94650000000001
+    },
+    {
+      "snapshotMs": 49.82962499999985,
+      "encodeDocumentMs": 11.881209000000126,
+      "nodeFileGenerateMs": 4.003125000000182,
+      "totalMs": 65.71395900000016
+    },
+    {
+      "snapshotMs": 50.368499999999585,
+      "encodeDocumentMs": 12.182458000000224,
+      "nodeFileGenerateMs": 4.225792000000183,
+      "totalMs": 66.77674999999999
+    },
+    {
+      "snapshotMs": 53.815458000000035,
+      "encodeDocumentMs": 9.626874999999927,
+      "nodeFileGenerateMs": 3.9582080000000133,
+      "totalMs": 67.40054099999998
+    },
+    {
+      "snapshotMs": 58.69337500000029,
+      "encodeDocumentMs": 10.65508299999965,
+      "nodeFileGenerateMs": 4.553208000000268,
+      "totalMs": 73.9016660000002
+    },
+    {
+      "snapshotMs": 53.04612499999985,
+      "encodeDocumentMs": 9.589249999999993,
+      "nodeFileGenerateMs": 4.0400830000003225,
+      "totalMs": 66.67545800000016
+    }
+  ],
+  "limitations": [
+    "Warm process and database cache; first sample is not cold-start",
+    "Production repository and encoder, but Node file I/O replaces Expo native files",
+    "No fsync or durable-storage guarantee; file timing covers UTF-8 write, close, rename and stat",
+    "No cleanup, sharing-availability check, system chooser, receiver or rendering timing",
+    "No phone performance claim or pass/fail speed threshold; no samples discarded"
+  ]
+}

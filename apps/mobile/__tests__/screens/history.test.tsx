@@ -9,6 +9,7 @@ const first = { id: 1, startedAt: '2026-09-23T00:00:00.000Z', completedAt: '2026
   durationSeconds: 3600, exerciseCount: 1, setCount: 1 };
 function repository(workouts: CompletedWorkoutSummary[] = []): WorkoutHistoryRepository {
   return { initialize: async () => ({ ok: true }), saveCompletedWorkout: async () => ({ ok: true, workoutId: 1 }),
+    readExportSnapshot: async () => ({ ok: false, code: 'StorageUnavailable' }),
     deleteCompletedWorkout: async () => ({ ok: false, code: 'NotFound' }),
     listCompletedWorkouts: async () => ({ ok: true, workouts }), getCompletedWorkout: async () => ({ ok: false, code: 'NotFound' }) };
 }

@@ -6,10 +6,12 @@ import type { CompletedWorkoutSummary, ListCompletedWorkoutsResult } from '../da
 import { formatCount, getWorkoutCopy } from '../../../i18n/workout-copy';
 import { LanguageSwitch } from './workout-screen';
 import { Action, PageHeading, colors, styles } from './primitives';
+import { DataSheet } from '../../data-control/ui/data-sheet';
 export function HistoryScreen({ onOpen, onTrain }: { onOpen: (id: number) => void; onTrain: () => void }) {
   const app = useWorkout();
   const { repository, revision, locale, calendarDate, setCalendarDate, selectedDate, setSelectedDate } = app;
-  const writePending = app.state.status === 'completing' || app.deleting;
+  const writePending = app.state.status === 'completing' || app.deleting || app.readingExport;
+  const [dataOpen, setDataOpen] = useState(false);
   const reads = useRef<Promise<void>>(Promise.resolve());
   const [attempt, setAttempt] = useState(0);
   const [loaded, setLoaded] = useState<{ revision: number; attempt: number; result: ListCompletedWorkoutsResult; workouts: readonly CompletedWorkoutSummary[] } | null>(null);
@@ -48,9 +50,11 @@ export function HistoryScreen({ onOpen, onTrain }: { onOpen: (id: number) => voi
     const date = new Date(0); date.setFullYear(next.year, next.month - 1, 1);
     setCalendarDate(date); setSelectedDate(null);
   }
-  return <ScrollView style={styles.page} contentContainerStyle={styles.content}>
+  return <><ScrollView style={styles.page} contentContainerStyle={styles.content}
+    accessibilityElementsHidden={dataOpen} importantForAccessibility={dataOpen ? 'no-hide-descendants' : 'auto'}>
     <PageHeading title={copy.history}><LanguageSwitch />
-      <Action primary disabled={app.state.status === 'completing'} onPress={() => { app.start(); onTrain(); }}>{active ? copy.continue : copy.start}</Action></PageHeading>
+      <Action primary disabled={app.state.status === 'completing' || app.readingExport} onPress={() => { app.start(); onTrain(); }}>{active ? copy.continue : copy.start}</Action>
+      <Action onPress={() => setDataOpen(true)}>{zh ? '数据' : 'Data'}</Action></PageHeading>
     {active && <Text style={styles.muted}>{zh ? '训练进行中' : 'Workout in progress'}</Text>}
     <View style={styles.top}><Action label={zh ? '上月' : 'Previous month'} disabled={year === 1 && month === 1} onPress={() => shift(-1)}>‹</Action>
       <Text style={[styles.heading, historyStyles.monthHeading]}>{calendarDate.toLocaleDateString(zh ? 'zh-CN' : 'en-GB', { localeMatcher: 'lookup', year: 'numeric', month: 'long' })}</Text>
@@ -92,7 +96,8 @@ export function HistoryScreen({ onOpen, onTrain }: { onOpen: (id: number) => voi
       <Text style={[styles.muted, historyStyles.historySummary]}>{exercises} · {sets} · {minutes} min</Text>
       <Text accessible={false} importantForAccessibility="no" style={[styles.muted, historyStyles.chevron]}>›</Text>
     </Pressable>; })}
-  </ScrollView>;
+  </ScrollView>{dataOpen && <DataSheet result={result} waitForReads={() => reads.current}
+    onReload={() => setAttempt(n => n + 1)} onClose={() => setDataOpen(false)} />}</>;
 }
 
 const historyStyles = StyleSheet.create({
