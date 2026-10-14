@@ -1,5 +1,11 @@
 # FitQuest agent instructions
 
+## 2026-10-14 continuation — current
+
+Fixed one cancellation-order bug: after awaiting sharing availability, cancellation now wins over an unavailable result. A failing regression reproduced SharingUnavailable instead of Cancelled; fixed before proceeding. Seven meaningful cases added, 188/25 plus type/lint pass. No UI/dependency changes. Both JS/Hermes exports and an offline Android build pass; current test APK `1ee63b686078` (arm64/debug signature/dev.fitquest.local), 36 source/package/lock hashes match staging and service source-map matches. Native current-build write-failure→retry→local diagnostic reception→return observed. Prior `1f3` additionally exercised unlogged42.5/12 input and selected-date preservation in this turn; do not transfer those observations to the new APK. Both existing databases unchanged across baseline, old-build checks and upgrade/new-build checks. Diagnostic receiver and temporary cache obstruction removed; original keyboard setting restored at teardown.
+
+PR3 was explicitly approved and merged into master `e190c7f`; this new fix requires its own sync/review record. No new default-branch merge authorization is inferred from PR3. iPhone Expo Go is installed per user, but Mac lacks full Xcode. Temporary LAN approval was previously rejected; a new explicit question is pending in this turn. Do not start LAN until answered. No physical/iOS, full fault matrix, TalkBack, backup, five-user/privacy acceptance or release claim. 00129/33 and 00214/18 remain.
+
 ## 2026-10-13 continuation — current evidence
 
 User explicitly authorized ADB automation of the task-owned Android emulator after CUA could not identify its window. APK `1f3ed5f3ba3d` was installed without resetting synthetic data. Actual local diagnostic receiver read the 8,061-byte, 20-workout JSON; cancellation, return and repeat export were observed. 320dp/130% Chinese/English sheet, English detail scrolling/close, process termination during chooser then restart without automatic sharing, and scoped startup cache cleanup have evidence. Both existing databases are byte-identical before/after (20/20/20 and separate 1000/4000/20000). Diagnostic receiver removed; density420/font1.0 restored.

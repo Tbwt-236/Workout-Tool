@@ -60,3 +60,15 @@ test.each(['before', 'after'] as const)('移动阶段异常(%s)不残留可分�
   expect(readFileSync(fileURLToPath(uri), 'utf8')).toBe('{"retry":true}');
   await files.release(uri, true);
 });
+
+test('取消删除失败仍解除活动保护，过期后可由受控清理回收', async () => {
+  const files = setup(), uri = await files.write('{"synthetic":true}');
+  const old = new Date(Date.now() - 48 * 60 * 60 * 1000);
+  utimesSync(fileURLToPath(uri), old, old);
+  faults.remove = true;
+  await expect(files.release(uri, true)).rejects.toThrow();
+  expect(readFileSync(fileURLToPath(uri), 'utf8')).toBe('{"synthetic":true}');
+  faults.remove = false; await files.cleanup();
+  expect(readdirSync(join(root, 'fitquest-exports'))).toEqual([]);
+  expect(Sharing.shareAsync).not.toHaveBeenCalled();
+});

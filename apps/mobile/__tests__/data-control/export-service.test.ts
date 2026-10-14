@@ -71,3 +71,78 @@ test('空历史与读取失败不生成文件，也不冒充合法空导出', as
     expect(x.files.write).not.toHaveBeenCalled(); expect(x.files.share).not.toHaveBeenCalled();
   } finally { x.f.dispose(); }
 });
+
+test('等待分享能力时已取消，迟到的不可用结果不再发布错误', async () => {
+  const x = await setup(), checking = deferred(), finish = deferred();
+  const phases: string[] = [];
+  x.files.isSharingAvailable = async () => { checking.resolve(); await finish.promise; return false; };
+  const unsubscribe = x.exporter.subscribe(() => phases.push(x.exporter.getState().phase));
+  try {
+    const pending = x.exporter.start('zh'); await checking.promise;
+    x.exporter.cancelPending(); finish.resolve();
+    expect(await pending).toEqual({ ok: false, code: 'Cancelled' });
+    expect(phases).not.toContain('error');
+    expect(x.exporter.getState()).toEqual({ phase: 'idle' });
+    expect(x.files.write).not.toHaveBeenCalled(); expect(x.files.share).not.toHaveBeenCalled();
+    x.files.isSharingAvailable = async () => true;
+    expect(await x.exporter.start('zh')).toEqual({ ok: true });
+  } finally { finish.resolve(); unsubscribe(); x.f.dispose(); }
+});
+
+test.each(['unavailable', 'throws'] as const)('分享能力检查%s时不生成文件，恢复后可显式重试', async failure => {
+  const x = await setup();
+  try {
+    const before = await x.repository.listCompletedWorkouts();
+    x.files.isSharingAvailable = async () => { if (failure === 'throws') throw new Error('native check failed'); return false; };
+    expect(await x.exporter.start('zh')).toEqual({ ok: false, code: 'SharingUnavailable' });
+    expect(x.files.write).not.toHaveBeenCalled(); expect(x.files.share).not.toHaveBeenCalled();
+    expect(x.files.release).not.toHaveBeenCalled();
+    expect(await x.repository.listCompletedWorkouts()).toEqual(before);
+    x.files.isSharingAvailable = async () => true;
+    expect(await x.exporter.start('en')).toEqual({ ok: true });
+  } finally { x.f.dispose(); }
+});
+
+test('缓存清理中关闭面板，清理完成后不写文件或迟到分享', async () => {
+  const x = await setup(), cleaning = deferred(), finish = deferred();
+  x.files.cleanup = async () => { cleaning.resolve(); await finish.promise; };
+  try {
+    const pending = x.exporter.start('zh'); await cleaning.promise; x.exporter.cancelPending();
+    expect(await x.exporter.start('en')).toEqual({ ok: false, code: 'Busy' });
+    finish.resolve(); expect(await pending).toEqual({ ok: false, code: 'Cancelled' });
+    expect(x.files.write).not.toHaveBeenCalled(); expect(x.files.share).not.toHaveBeenCalled();
+    expect(x.exporter.getState()).toEqual({ phase: 'idle' });
+  } finally { finish.resolve(); x.f.dispose(); }
+});
+
+test('系统已接管后后台事件不删文件或重复分享，返回后可再导出', async () => {
+  const x = await setup(), sharing = deferred(), finish = deferred();
+  x.files.share = jest.fn(async () => { sharing.resolve(); await finish.promise; });
+  try {
+    const pending = x.exporter.start('zh'); await sharing.promise; x.exporter.cancelPending();
+    expect(await x.exporter.start('en')).toEqual({ ok: false, code: 'Busy' });
+    expect(x.files.release).not.toHaveBeenCalled();
+    finish.resolve(); expect(await pending).toEqual({ ok: true });
+    expect(x.files.share).toHaveBeenCalledTimes(1);
+    expect(x.files.release).toHaveBeenCalledWith('file://synthetic/export-1.json', false);
+    expect(await x.exporter.start('en')).toEqual({ ok: true });
+    expect(x.files.share).toHaveBeenCalledTimes(2);
+  } finally { finish.resolve(); x.f.dispose(); }
+});
+
+test('取消写入后释放迟到仍保持单任务，释放失败也能结束并重试', async () => {
+  const x = await setup(), writing = deferred(), finishWrite = deferred(), releasing = deferred(), finishRelease = deferred();
+  x.files.write = jest.fn(async () => { writing.resolve(); await finishWrite.promise; return 'file://synthetic/cancelled.json'; });
+  x.files.release = jest.fn(async () => { releasing.resolve(); await finishRelease.promise; throw new Error('cleanup failed'); });
+  try {
+    const pending = x.exporter.start('zh'); await writing.promise; x.exporter.cancelPending();
+    finishWrite.resolve(); await releasing.promise;
+    expect(await x.exporter.start('en')).toEqual({ ok: false, code: 'Busy' });
+    expect(x.files.share).not.toHaveBeenCalled();
+    expect(x.files.release).toHaveBeenCalledWith('file://synthetic/cancelled.json', true);
+    finishRelease.resolve(); expect(await pending).toEqual({ ok: false, code: 'Cancelled' });
+    expect(x.exporter.getState()).toEqual({ phase: 'idle' });
+    x.files.release = async () => {};
+    expect(await x.exporter.start('zh')).toEqual({ ok: true });
+  } finally { finishWrite.resolve(); finishRelease.resolve(); x.f.dispose(); }
+});
