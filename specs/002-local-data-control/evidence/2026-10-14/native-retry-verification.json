@@ -1,0 +1,13 @@
+{
+  "apk": "1f3ed5f3ba3d",
+  "receiverBytes": 8061,
+  "receiverSha256": "b170ccfce8629c9be5993fd339797bb4cb6007fd5329ea0ad65c4f810960a762",
+  "allCompletedWorkoutsMatchBaseline": true,
+  "draftExcluded": true,
+  "unloggedInputAfterRetry": {
+    "weight": "42.5",
+    "reps": "12"
+  },
+  "selectedDatePreserved": "2026-10-02",
+  "keyboardNavigation": "Dismissed keyboard before tapping History; no keyboard-visible tab navigation claim"
+}

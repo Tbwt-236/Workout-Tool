@@ -1,0 +1,27 @@
+{
+  "fitquest.db": {
+    "allThreeStagesIdentical": true,
+    "sha256": "17205ab3bf76210f2f34aa14dd9391dcb327d064163e6105742fded3c6e45191",
+    "counts": {
+      "workouts": 20,
+      "exercises": 20,
+      "sets": 20
+    }
+  },
+  "fitquest-benchmark.db": {
+    "allThreeStagesIdentical": true,
+    "sha256": "83c6da212f3100e4e378fca8db809e26aeb870b4f70fd52a697154d305916171",
+    "counts": {
+      "workouts": 1000,
+      "exercises": 4000,
+      "sets": 20000
+    }
+  },
+  "newBuildReception": {
+    "apk": "1ee63b686078",
+    "bytes": 8061,
+    "sha256": "f9730ce5540773da636f9e6f5ce7e7d09a1f3f51573b99f4d5d207600167a97f",
+    "completedWorkoutsUnchanged": true,
+    "draftExcluded": true
+  }
+}

@@ -38,8 +38,9 @@ export function createExportService({ repository, files, now = () => new Date().
         if (result.snapshot.workouts.length === 0) return fail('Empty');
         const document = encodeExportDocument(result.snapshot, now());
         failure = 'SharingUnavailable';
-        if (!(await files.isSharingAvailable())) return fail('SharingUnavailable');
+        const sharingAvailable = await files.isSharingAvailable();
         if (job.cancelled) return cancelled();
+        if (!sharingAvailable) return fail('SharingUnavailable');
         try { await files.cleanup(); } catch { /* Best effort, independently retryable. */ }
         if (job.cancelled) return cancelled();
         failure = 'WriteFailed'; publish({ phase: 'writing' });
